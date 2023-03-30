@@ -2,7 +2,7 @@
     这里是最初代的heuristic算法,之后需要更新
     当前需要检测的是蓝色的棋子数，因为单人模式只能操作红色棋子"""
 
-def count_number(board, color) -> int:
+def count_number(board: dict[tuple, tuple], color) -> int:
     count = 0
     for temp in board.values():  # 让temp变成颜色,如果和检测的color相同，那么count++（现在检测的是蓝色的棋子数）
         current_color = temp[0]  #这里的0是因为value有两个值，一个power一个color，所以只需要提取第一个值就是color
@@ -16,5 +16,10 @@ def get_action_list(board: dict[tuple, tuple], color) -> list:
     return
 
 
+"""将修改过的heuristic方法写在下面的function中"""
 def calculate_heuristic(board: dict[tuple, tuple]) -> int:
+    return
+
+"""计算g值的函数"""
+def calculate_g(board, ) -> int:
     return
