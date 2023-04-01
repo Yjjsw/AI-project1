@@ -1,6 +1,8 @@
 # COMP30024 Artificial Intelligence, Semester 1 2023
 # Project Part A: Single Player Infexion
 
+
+
 from sys import stdin
 from .program import search
 
@@ -43,6 +45,9 @@ def main():
     """
     Main entry point for program.
     """
+
+
+
     input = parse_input(stdin.read())
     sequence: list[tuple] = search(input)
     print_sequence(sequence)

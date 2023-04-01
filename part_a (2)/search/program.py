@@ -1,27 +1,19 @@
 # COMP30024 Artificial Intelligence, Semester 1 2023
 # Project Part A: Single Player Infexion
 
+from search.algorithm import generate_spread_list  # 记住加文件夹名search.
+from search.heuristic import count_number
+
 from .utils import render_board
 
 
 def search(input: dict[tuple, tuple]) -> list[tuple]:
-    """
-    This is the entry point for your submission. The input is a dictionary
-    of board cell states, where the keys are tuples of (r, q) coordinates, and
-    the values are tuples of (p, k) cell states. The output should be a list of 
-    actions, where each action is a tuple of (r, q, dr, dq) coordinates.
-
-    See the specification document for more details.
-    """
-
-    # The render_board function is useful for debugging -- it will print out a 
-    # board state in a human-readable format. Try changing the ansi argument 
-    # to True to see a colour-coded version (if your terminal supports it).
     print(render_board(input, ansi=True))
-    "这里的input就是一个board，到时候需要board只需要输入input即可"
 
-    # Here we're returning "hardcoded" actions for the given test.csv file.
-    # Of course, you'll need to replace this with an actual solution...
+    """test 用, test count number"""
+    spread_list = count_number(input, 'r')
+    print(spread_list)
+
     return [
         (5, 6, -1, 1),
         (3, 1, 0, 1),
