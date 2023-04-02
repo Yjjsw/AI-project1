@@ -13,22 +13,22 @@ def count_number(board: dict[tuple, tuple], color) -> int:
     return count
 
 
-
 """将修改过的heuristic方法写在下面的function中，这里第一种count number方法没有考虑到棋子power的问题，学长默认了
-    一个棋子只能吃一个棋，就会导致count number方法不是admissible，改进后可以看到会考虑棋子的power值"""
+    一个棋子只能吃一个棋，就会导致count number方法不是admissible，改进后可以看到会考虑棋子的power值，但是运行时间过长"""
 
 
 def calculate_heuristic(board: dict[tuple, tuple]) -> int:
     max_power = 0
     for temp in board.values():
-        if temp[0] == 'r': #检测是否是红色棋子
-            if temp[1] > max_power: #检测power是否是最大值
+        if temp[0] == 'r':  # 检测是否是红色棋子
+            if temp[1] > max_power:  # 检测power是否是最大值
                 max_power = temp[1]
     final = count_number(board, 'b') - max_power
     return final
 
 
 """计算g值的函数，这个g的计算⽅式是当前节点到起始节点的距离加上下⼀个节点的距离，所以其实不需要运算，只要每次child节点+1即可"""
+
 
 def calculate_g(board) -> int:
     return
