@@ -2,7 +2,7 @@ import math
 
 board_size = 7  # board size
 pos_limit = board_size - 1
-move_set = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, -1), (-1, 1)]  # all possible moving directions
+move_set = [(1, -1), (1, 0), (0, 1), (-1, 1), (-1, 0), (0, -1)]  # all possible moving directions
 # 定义向上为+1，-1 向下就是-1，+1，向左上0，-1，向右下0，+1，左下-1,0，右上+1,0
 
 # return the new coordinate when moving token at (x,y) towards direction 1 step
@@ -13,14 +13,14 @@ def move(coordinate, direct) -> tuple:
     return (new_x, new_y)
 
 
-# 给定棋子的coordinate(2,1)和direction（0，1）去更新board，其中包含了spread
+# 给定棋子的coordinate(2,1)和direction（0，1）去更新board，其中包含了spread,这里少一个del board[coord]，记得哪里用这个function就哪里写一下
 # 测试过update，没问题
 def update_board(board, coord, direct=None) -> dict[tuple, tuple]:
     x = coord[0]
     y = coord[1]
     color = board[coord][0]
     power = board[coord][1]
-    del board[coord] # 删除当前棋子，可能需要等所有的action都得到后再pop掉
+    #del board[coord]
     while power > 0:  # 用一个loop来让棋子一格格移动，power有多少就移动多少个的1
         next = move((x, y), direct)
         if next in board:  # 当前格子已经有棋子了（吃子）
