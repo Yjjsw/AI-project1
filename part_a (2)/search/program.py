@@ -18,7 +18,6 @@ def search(input: dict[tuple, tuple]) -> list[tuple]:
     end = time.time()
     print('Running time: %s Seconds' % (end - start))"""
     spread_list = a_star(input)
-    print(spread_list)
     print(render_board(input, ansi=True))
 
     return [

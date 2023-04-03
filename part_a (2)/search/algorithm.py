@@ -75,14 +75,16 @@ def all_start(board) -> list[Node]:
 
 def a_star(board) -> list[tuple]:  # path最后形式(5, 6, -1, 1)，这里得出来的path
     start_node_list = all_start(board)
-
     unused_list = []  # 对应那些没有child的节点
     used_list = []  # 对应已经读取过的节点，这两个list的作用是遍历几乎所有的棋盘来看什么时候达到goal test，达到后再通过当前棋子的parent来找path
-    for cur_node in start_node_list:  # 将所有的start node初始化并都放入list中，因为project1中start node只有红色的棋子，所以这里start node不考虑蓝色棋子
-        cur_node.g = 0
-        cur_node.h = count_number(board, 'b')
-        cur_node.f = 0
-        unused_list.append(cur_node)
+    for new_node in start_node_list:  # 将所有的start node初始化并都放入list中，因为project1中start node只有红色的棋子，所以这里start node不考虑蓝色棋子
+        new_node.g = 0
+        new_node.h = count_number(board, 'b')
+        new_node.f = 0
+        unused_list.append(new_node)
+    parent_node = unused_list[0]  # 初始化之前的节点
+    "用计数器来test，使得loop跑规定次数的循环"
+    test_count = 0
 
     while len(unused_list) > 0:  # 只要还有起始点，说明还有可能有更优解
         cur_node = unused_list[0]
@@ -94,6 +96,18 @@ def a_star(board) -> list[tuple]:  # path最后形式(5, 6, -1, 1)，这里得�
 
         unused_list.remove(cur_node)
         used_list.append(cur_node)
+
+        # 让cur_node和之前的node比较，如果两个坐标一样，说明没有move（只有第一次是这种情况，后面的node都会被移出unused list中），如果两个坐标不一样，互相减一下就能得到方向
+        # 比如新的坐标为6，6，之前的坐标为5,6，只需要用6，6 - 5,6就能得到1,0，也就是5,6 spread的方向
+        if cur_node.position != parent_node.position:  # 两者的node的位置不同
+            x = cur_node.position[0] - parent_node.position[0]
+            y = cur_node.position[1] - parent_node.position[1]
+            direct = (x, y)  # 得到方向
+            update_board(board, parent_node.position, direct)
+            del board[parent_node.position]  # 删掉老节点
+            parent_node = cur_node  # 更新parent_node
+        else:  # 第一次,不需要做任何事,下面一行的操作是用来凑数的,因为不能用continue
+            parent_node = cur_node
 
 
         # goal test,看是否找到了正确解，这里的正确解就是blue方的棋子数为0
@@ -110,30 +124,42 @@ def a_star(board) -> list[tuple]:  # path最后形式(5, 6, -1, 1)，这里得�
         child_node_list = []
         child_position_list = generate_child_list(board, cur_node.position, cur_node.move)
         count = 0
-        for value in cur_node.move:
-            direct = value[1]  # 得到方向
-            board = update_board(board, cur_node.position, direct)  # 更新棋盘
+        for value in cur_node.move:  # 得到6个方向
+            direct = value[1]
+            board = update_board(board, cur_node.position, direct)  # 更新棋盘,这样就是只往6个方向spread每个方向spread一次
             power = board[cur_node.position][1]  # 得到当前棋子的power
-            for loop_time in range(power):  # 有多大power就循环几次，这样可以6个方向*power从而得到所有的child
+            for loop_time in range(power):  # 有多大power就循环几次，这样可以循环6个方向*power次，从而得到所有的child
+
                 child_position = child_position_list[count][0]  # 这里的child_position_list就是一个装满了对应所有child的位置
-                count += 1 #使得根据power的大小而改变
-                new_child_node = Node(cur_node, child_position, None)
-                new_child_node.move = generate_spread_list(new_child_node.position)
-                # 这里初始化child，child node的parent是当前的node，它的position根据读取的哪一个move来计算，move通过function来得到
 
-                # 最后给child的g，h，f赋值，这里就需要赋值是因为只有在这里棋盘才更新了
-                new_child_node.g = cur_node.g + 1
-                new_child_node.h = count_number(board, 'b')
-                new_child_node.f = new_child_node.g + new_child_node.h
+                for check in used_list:
+                    check_position = check.position
+                    if check_position == child_position:  # 如果在used_list中，说明不是初始化
+                        already_in = True
+                        break
+                    else:
+                        already_in = False
+                if not already_in:
+                    count += 1  # 使得根据power的大小而改变
+                    new_child_node = Node(cur_node, child_position, None)
+                    new_child_node.move = generate_spread_list(new_child_node.position)
+                    # 这里初始化child，child node的parent是当前的node，它的position根据读取的哪一个move来计算，move通过function来得到
 
-                child_node_list.append(new_child_node)
+                    # 最后给child的g，h，f赋值，这里就需要赋值是因为只有在这里棋盘才更新了
+                    new_child_node.g = cur_node.g + 1
+                    new_child_node.h = count_number(board, 'b')
+                    new_child_node.f = new_child_node.g + new_child_node.h
+                    child_node_list.append(new_child_node)
 
-                del board[child_position] #删除child节点，但是会导致棋盘上没有棋子了
-        print(child_node_list[0].position)
-        print(child_node_list[0].g)
-        print(child_node_list[0].f)
-        break
+                    del board[child_position]  # 删除child节点，因为初始化结束了
+
+        print(parent_node.position)
+        print(cur_node.position)
+        test_count += 1
+        if (test_count == 2):
+            break
         """test"""
+
 
         for child in child_node_list:
             for check_used in used_list:  # 如果在used_list中，就不需要再管，因为这个node被访问过了就已经在最终答案中了，
@@ -145,4 +171,5 @@ def a_star(board) -> list[tuple]:  # path最后形式(5, 6, -1, 1)，这里得�
                     continue
 
             unused_list.append(child)
+
     return
