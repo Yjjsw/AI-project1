@@ -23,7 +23,7 @@ def update_board(board, coord, direct=None) -> dict[tuple, tuple]:
     y = coord[1]
     color = board[coord][0]
     power = board[coord][1]
-    # del board[coord]
+    del board[coord]
     while power > 0:  # 用一个loop来让棋子一格格移动，power有多少就移动多少个的1
         next = move((x, y), direct)
         if next in board:  # 当前格子已经有棋子了（吃子）
@@ -38,11 +38,12 @@ def update_board(board, coord, direct=None) -> dict[tuple, tuple]:
 
 # 给定棋盘，棋子坐标和方向向量，output一个按照当前方向所spread的一个假设棋盘
 def spread(board, coordinate, direct=None) -> dict[tuple, tuple]:
-    new_board = board
+    new_board = board.copy() #只是多了一步copy
     x = coordinate[0]
     y = coordinate[1]
     color = new_board[coordinate][0]
     power = new_board[coordinate][1]
+    del new_board[coordinate]
     while power > 0:  # 去spread
         next = move((x, y), direct)
         if next in new_board:
