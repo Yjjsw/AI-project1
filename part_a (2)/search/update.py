@@ -54,3 +54,4 @@ def spread(board, coordinate, direct=None) -> dict[tuple, tuple]:
         x += direct[0]  # 如果power大于1，那么还需要用x继续往相同的方向移动棋子
         y += direct[1]
     return new_board
+
